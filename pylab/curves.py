@@ -74,12 +74,14 @@ def zc_read_csv(filename):
 
 def draw_curves(filenames, labels,savefile,window_length=151,mode=0,xmin=0,xmax=1000):
     fig = plt.figure()
-    fig.set_size_inches(5, 4)  # 整个绘图区域的宽度10和高度4
+    fig.set_size_inches(3.5, 3)  # 整个绘图区域的宽度10和高度4
     ax = fig.add_subplot(1, 1, 1)  # 整个绘图区分成一行两列，当前图是第一个。
     # ax.set_title("L1")
-    ax.set_xlabel("Step")
+    # ax.set_xlabel("Step")
     ax.set_xticks(np.arange(0,25000,5000))
-    ax.set_ylabel("Error")
+    # ax.set_ylabel("Error")
+    ax.set_ylim(0,0.7)
+    ax.set_xticklabels(['0K','5K','10k','15k','20k'])
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(True)
@@ -115,13 +117,13 @@ def draw_curves(filenames, labels,savefile,window_length=151,mode=0,xmin=0,xmax=
         # ax.set_label(labels[i])
         # ax.scatter(x, y)
         if mode==2:
-            ax.plot(x[0:1150], y[0:1150], colors[i], label=labels[i])
+            ax.plot(x[0:1150], y[0:1150], colors[i], label=labels[i],linewidth=2)
         else:
-            ax.plot(x, y, colors[i], label=labels[i])
+            ax.plot(x, y, colors[i], label=labels[i],linewidth=2)
 
     plt.legend(loc='upper right', shadow=True, fontsize='medium')
     # plt.grid(True)
-    plt.savefig(savefile,format='pdf')
+    plt.savefig(savefile,format='pdf',bbox_inches='tight')
     plt.show()
 
 def draw_loss():
@@ -136,30 +138,28 @@ def draw_loss():
               r'$\alpha$4',
               r'$L2$ '
               ]
-    draw_curves(filenames,labels,"loss.pdf",window_length=151,mode=1)
+    draw_curves(filenames,labels,"loss_compare.pdf",window_length=151,mode=1)
 
 def draw_structrue_compare():
     filenames=['csv2/20181107_0951.csv',
-               'csv2/20181111_0100.csv',
+               'csv2/20181113_0927.csv',
                'csv2/20181112_1745.csv',
                'csv2/20181110_1752.csv']
-    labels = [r'Res-A & REG-$\alpha$1',
-              r'Plain  & REG-$\alpha$1',
-              r'Res-A & CLASS-6',
-              r'Plain  & CLASS-6'
+    labels = [r'RAN  & REG-$\alpha$1',
+              r'Plain & REG-$\alpha$1',
+              r'RAN  & CLASS-6',
+              r'Plain & CLASS-6'
               ]
-    draw_curves(filenames, labels,"structure.pdf",window_length=151, mode=2,xmin=0,xmax=1300)
+    draw_curves(filenames, labels,"structure_compare.pdf",window_length=151, mode=2,xmin=0,xmax=1300)
 
 
 def draw_loss_function(savefile,x_max):
 
     fig = plt.figure()
-    fig.set_size_inches(5, 4)  # 整个绘图区域的宽度10和高度4
+    fig.set_size_inches(3.5, 3)  # 整个绘图区域的宽度10和高度4
     ax = fig.add_subplot(1, 1, 1)  # 整个绘图区分成一行两列，当前图是第一个。
     # ax.set_title("L1")
-    ax.set_xlabel("Step")
     ax.set_xticks(np.arange(-20, 25, 10))
-    ax.set_ylabel("Error")
     ax.spines['top'].set_visible(True)
     ax.spines['right'].set_visible(True)
     ax.spines['bottom'].set_visible(True)
@@ -168,17 +168,17 @@ def draw_loss_function(savefile,x_max):
     x = np.arange(-x_max, x_max + 1, 1)
     for i in range(1,5,1):
         y = pow(abs(0.1 * x), i)*(abs(x )< 10)+(abs(0.1 * x) * i - i+1)*(abs(x )>= 10)
-        ax.plot(x, y, label=r'$\alpha${num}'.format(num=i))
+        ax.plot(x, y, label=r'$\alpha${num}'.format(num=i),linewidth=2)
     y = pow(abs(0.1 * x), 2)
-    ax.plot(x, y, '--',label='L2')
+    ax.plot(x, y, '--',label='L2',linewidth=2)
     plt.legend(loc='upper center', shadow=True, fontsize='medium')
-    plt.savefig(savefile, format='pdf')
+    plt.savefig(savefile, format='pdf', bbox_inches='tight')
     plt.show()
 
 
 
 if __name__=='__main__':
     # draw_loss()
-    # draw_structrue_compare()
-    draw_loss_function('loss_function.pdf',22)
+    draw_structrue_compare()
+    # draw_loss_function('loss_function.pdf',22)
 
