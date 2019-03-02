@@ -175,10 +175,41 @@ def draw_loss_function(savefile,x_max):
     plt.savefig(savefile, format='pdf', bbox_inches='tight')
     plt.show()
 
+def draw_loss_function2(savefile,x_max):
 
+    fig = plt.figure()
+    fig.set_size_inches(3.5, 3)  # 整个绘图区域的宽度10和高度4
+    ax = fig.add_subplot(1, 1, 1)  # 整个绘图区分成一行两列，当前图是第一个。
+    # ax.set_title("L1")
+    ax.set_xticks(np.arange(-30, 35, 10))
+    ax.spines['top'].set_visible(True)
+    ax.spines['right'].set_visible(True)
+    ax.spines['bottom'].set_visible(True)
+    ax.spines['left'].set_visible(True)
+    # plt.title("一元一次函数")
+    x = np.arange(-x_max, x_max + 1, 1)
+    for i in range(2,3,1):
+        y = pow(abs(0.1 * x), i)*(abs(x )< 10)+(abs(0.1 * x) * i - i+1)*(abs(x )>= 10)
+        ax.plot(x, y, label=r'$\alpha${num}'.format(num=i),linewidth=2)
+    y = pow(abs(0.1 * x), 2)
+    ax.plot(x, y, '--',label='L2',linewidth=2)
+
+    y = 0.75 * abs(0.1 * x) * (x < 0) + (0.25 * abs(0.1 * x)) * (x>0)
+    ax.plot(x, y, label=r'quantile-0.25', linewidth=2)
+
+    y = 0.25 * abs(0.1 * x) * (x < 0) + (0.75 * abs(0.1 * x)) * (x > 0)
+    ax.plot(x, y, label=r'quantile-0.75', linewidth=2)
+
+    y =np.log(np.cosh(0.1*x))
+    ax.plot(x, y, label=r'log-cosh', linewidth=2)
+
+    plt.legend(loc='upper center', shadow=True, fontsize='medium')
+    plt.savefig(savefile, format='pdf', bbox_inches='tight')
+    plt.show()
 
 if __name__=='__main__':
     # draw_loss()
-    draw_structrue_compare()
+    # draw_structrue_compare()
     # draw_loss_function('loss_function.pdf',22)
+    draw_loss_function2('robust_loss_function.pdf',22)
 
