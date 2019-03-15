@@ -72,7 +72,7 @@ def zc_read_csv(filename):
         y.append(zc_row["validation_error"])
     return x,y
 
-def draw_curves(filenames, labels,savefile,window_length=151,mode=0,xmin=0,xmax=1000):
+def draw_curves(filenames, labels,savefile,window_length=151,mode=None,xmin=0,xmax=1000):
     fig = plt.figure()
     fig.set_size_inches(3.5, 3)  # 整个绘图区域的宽度10和高度4
     ax = fig.add_subplot(1, 1, 1)  # 整个绘图区分成一行两列，当前图是第一个。
@@ -91,9 +91,10 @@ def draw_curves(filenames, labels,savefile,window_length=151,mode=0,xmin=0,xmax=
     for i, file in enumerate(filenames):
         x, y = zc_read_csv(file)
         # 获得画图对象。
-        if mode == 0:
+        if mode is None:
             x = np.array(x[xmin:xmax])
             y = np.array(y[xmin:xmax])
+
         elif mode ==1 :
             if i < 3:
                 x = np.array(x[xmin:xmax*2:2])
@@ -108,6 +109,10 @@ def draw_curves(filenames, labels,savefile,window_length=151,mode=0,xmin=0,xmax=
             else:
                 x = np.array(x[xmin:xmax])
                 y = np.array(y[xmin:xmax])
+        else :
+            x = np.array(x[xmin:xmax*mode[i]:mode[i]])
+            y = np.array(y[xmin:xmax*mode[i]:mode[i]])
+
 
 
         # x_new = np.linspace(xmin,xmax,(xmax-xmin))
@@ -131,14 +136,29 @@ def draw_loss():
                'csv1/20181108_0029.csv',
                'csv1/20181108_0941.csv',
                'csv1/20181108_1541.csv',
-               'csv1/20181108_2207.csv']
+               'csv1/20181112_1745.csv']
     labels = [r'$\alpha$1',
               r'$\alpha$2',
               r'$\alpha$3',
               r'$\alpha$4',
               r'$L2$ '
               ]
-    draw_curves(filenames,labels,"loss_compare.pdf",window_length=151,mode=1)
+    draw_curves(filenames,labels,"loss_compare.pdf", window_length=151, mode=[2, 2, 2, 1, 1])
+
+def draw_other_robust_loss():
+    filenames=['csv1/20181112_1745.csv',
+               'csv1/20181108_0029.csv',
+               'csv1/20181108_0941.csv',
+               'csv1/20181112_0853.csv',
+               'csv1/20190314_1856.csv']
+    labels = [r'$L2$',
+              r'$\alpha2$',
+              r'$log$-$cosh$',
+              r'$quantile_{0.25}$',
+              r'$quantile_{0.75}$ '
+              ]
+    draw_curves(filenames, labels, "robust_loss_compare.pdf", window_length=151, mode=[1, 2, 2, 1, 1])
+
 
 def draw_structrue_compare():
     filenames=['csv2/20181107_0951.csv',
@@ -150,7 +170,8 @@ def draw_structrue_compare():
               r'RAN  & CLASS-6',
               r'Plain & CLASS-6'
               ]
-    draw_curves(filenames, labels,"structure_compare.pdf",window_length=151, mode=2,xmin=0,xmax=1300)
+    draw_curves(filenames, labels,"structure_compare.pdf",window_length=151, mode=[2, 1, 1, 1], xmin=0,xmax=1300)
+
 
 
 def draw_loss_function(savefile,x_max):
@@ -192,24 +213,25 @@ def draw_loss_function2(savefile,x_max):
         y = pow(abs(0.1 * x), i)*(abs(x )< 10)+(abs(0.1 * x) * i - i+1)*(abs(x )>= 10)
         ax.plot(x, y, label=r'$\alpha${num}'.format(num=i),linewidth=2)
     y = pow(abs(0.1 * x), 2)
-    ax.plot(x, y, '--',label='L2',linewidth=2)
+    ax.plot(x, y, '--',label=r'$L2$',linewidth=2)
 
     y = 0.75 * abs(0.1 * x) * (x < 0) + (0.25 * abs(0.1 * x)) * (x>0)
-    ax.plot(x, y, label=r'quantile-0.25', linewidth=2)
+    ax.plot(x, y, label=r'$quantile_{0.25}$', linewidth=2)
 
     y = 0.25 * abs(0.1 * x) * (x < 0) + (0.75 * abs(0.1 * x)) * (x > 0)
-    ax.plot(x, y, label=r'quantile-0.75', linewidth=2)
+    ax.plot(x, y, label=r'$quantile_{0.75}$', linewidth=2)
 
     y =np.log(np.cosh(0.1*x))
-    ax.plot(x, y, label=r'log-cosh', linewidth=2)
+    ax.plot(x, y, label= r'$log$-$cosh$', linewidth=2)
 
     plt.legend(loc='upper center', shadow=True, fontsize='medium')
     plt.savefig(savefile, format='pdf', bbox_inches='tight')
     plt.show()
 
 if __name__=='__main__':
-    # draw_loss()
+    draw_loss()
     # draw_structrue_compare()
+    draw_other_robust_loss()
     # draw_loss_function('loss_function.pdf',22)
     draw_loss_function2('robust_loss_function.pdf',22)
 
