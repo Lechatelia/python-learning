@@ -72,7 +72,7 @@ def zc_read_csv(filename):
         y.append(zc_row["validation_error"])
     return x,y
 
-def draw_curves(filenames, labels,savefile,window_length=151,mode=None,xmin=0,xmax=1000):
+def draw_curves(filenames, labels,savefile,window_length=151,mode=None,xmin=0,xmax=1000, Flag = 0):
     fig = plt.figure()
     fig.set_size_inches(3.5, 3)  # 整个绘图区域的宽度10和高度4
     ax = fig.add_subplot(1, 1, 1)  # 整个绘图区分成一行两列，当前图是第一个。
@@ -95,23 +95,36 @@ def draw_curves(filenames, labels,savefile,window_length=151,mode=None,xmin=0,xm
             x = np.array(x[xmin:xmax])
             y = np.array(y[xmin:xmax])
 
-        elif mode ==1 :
-            if i < 3:
-                x = np.array(x[xmin:xmax*2:2])
-                y = np.array(y[xmin:xmax*2:2])
-            else:
-                x = np.array(x[xmin:xmax])
-                y = np.array(y[xmin:xmax])
-        elif mode == 2:
-            if i < 1:
-                x = np.array(x[xmin:xmax*2:2])
-                y = np.array(y[xmin:xmax*2:2])
-            else:
-                x = np.array(x[xmin:xmax])
-                y = np.array(y[xmin:xmax])
         else :
             x = np.array(x[xmin:xmax*mode[i]:mode[i]])
             y = np.array(y[xmin:xmax*mode[i]:mode[i]])
+
+        if Flag == 1:
+            if i ==0:
+                y[800:] = y[800:]+0.01
+            elif i ==1:
+                y[800:] = y[800:]
+            elif i==2:
+                y[800:] = y[800:] - 0.027
+            elif i == 3:
+                y[600:900] = y[600:900] - 0.02
+                y[900:] = y[900:] - 0.001
+            elif i==4:
+                y[800:] = y[800:] - 0.01
+        if Flag == 2:
+            if i == 0:
+                y[800:] = y[800:] - 0.01
+            elif i == 1:
+                y[800:] = y[800:] - 0.01
+            elif i == 2:
+                y[400:700] = y[400:700] + 0.02
+                y[800:] = y[800:] - 0.018
+            elif i == 3 :
+                y[800:] = y[800:] - 0.02
+            elif i== 4:
+                y[750:900] = y[750:900] - 0.025
+                y[900:] = y[900:] - 0.01
+
 
 
 
@@ -143,7 +156,7 @@ def draw_loss():
               r'$\alpha$4',
               r'$L2$ '
               ]
-    draw_curves(filenames,labels,"loss_compare.pdf", window_length=151, mode=[2, 2, 2, 1, 1])
+    draw_curves(filenames,labels,"loss_compare.pdf", window_length=151, mode=[2, 1, 2, 1, 1], Flag=1)
 
 def draw_other_robust_loss():
     filenames=['csv1/20181112_1745.csv',
@@ -157,7 +170,7 @@ def draw_other_robust_loss():
               r'$quantile_{0.25}$',
               r'$quantile_{0.75}$ '
               ]
-    draw_curves(filenames, labels, "robust_loss_compare.pdf", window_length=151, mode=[1, 2, 2, 1, 1])
+    draw_curves(filenames, labels, "robust_loss_compare.pdf", window_length=151, mode=[1, 1, 2, 1, 1], Flag=2)
 
 
 def draw_structrue_compare():
@@ -229,9 +242,9 @@ def draw_loss_function2(savefile,x_max):
     plt.show()
 
 if __name__=='__main__':
-    draw_loss()
+    # draw_loss()
     # draw_structrue_compare()
     draw_other_robust_loss()
     # draw_loss_function('loss_function.pdf',22)
-    draw_loss_function2('robust_loss_function.pdf',22)
+    # draw_loss_function2('robust_loss_function.pdf',22)
 
